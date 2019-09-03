@@ -6,17 +6,14 @@
 
 int main()
 {
-	modmath::Vector<float, 4> v1(3.0f, 4.0f, 3.0f, 2.0f);
-	modmath::Vector<float, 4> v2(1.0f, 2.0f, 6.0f, 5.7f);
+	modmath::vec3 point1(0.5f, 0.4f, 0.1f);
+	modmath::vec3 point2(0.4f, 0.9f, 0.1f);
+	modmath::vec3 point3(0.1f, 0.8f, 0.6f);
 
-	modmath::vec4 v3 = v2 + 2.0f;
+	modmath::vec3 vector1 = point2 - point1;
+	modmath::vec3 vector2 = point3 - point1;
 
-	modmath::vec2 vec(4.0f, 5.1f);
+	modmath::vec3 normal = modmath::Vector<float, 3>::CrossProduct(vector2, vector1);
 
-	modmath::vec2i v1i(4, 5);
-	modmath::vec2i v2i(v1i + 7);
-
-
-	int i = 0;
 }
 

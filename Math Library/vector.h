@@ -1,5 +1,6 @@
 #pragma once
 #include <yvals.h>
+#include <cmath>
 
 #define MODMATH_VECTOR_OPERATOR(OP, Mod)					\
 	{														\
@@ -10,6 +11,8 @@
 		}													\
 		return result;										\
 	}
+
+#define POW2(x) ((x)*(x))
 	
 namespace modmath {
 
@@ -106,6 +109,83 @@ namespace modmath {
 		Vector<T, Dims> operator/(const T s)
 		{
 			MODMATH_VECTOR_OPERATOR(/, s);
+		}
+
+		// Compute vector length
+		inline T Length()
+		{
+			return LengthCalc(*this);
+		}
+
+		template<class T, int Dims>
+		inline T LengthCalc(const Vector<T, Dims>& v)
+		{
+			T sum = 0;
+			for (int i = 0; i < Dims; i++)
+			{
+				sum += POW2(v.data_[i]);
+			}
+			return sqrt(sum);
+		}
+
+		// Normalize this vector in-place
+		inline T Normalize()
+		{
+			return NormalizeCalc(*this);
+		}
+
+		template<class T, int Dims>
+		inline T NormalizeCalc(Vector<T, Dims> &v)
+		{
+			const T length = LengthCalc(v);
+			v = v / length;
+			return length;
+		}
+
+		// Compute normalized version of this vector
+		inline Vector<T, Dims> Normalized()
+		{
+			return NormalizedCalc(*this);
+		}
+
+		template<class T, int Dims>
+		inline Vector<T, Dims> NormalizedCalc(const Vector<T, Dims>& v)
+		{
+			Vector<T, Dims> normalized = *this;
+			return normalized / LengthCalc(v);
+		}
+
+
+		// Compute dot product betweem two vectors
+		static inline T DotProduct(const Vector<T, Dims>& v1, const Vector<T, Dims> & v2)
+		{
+			return DotProductCalc(v1, v2);
+		}
+
+		template <class T>
+		static inline T DotProductCalc(const Vector<T, Dims>& v1, const Vector<T, Dims>& v2)
+		{
+			T sum = 0;
+			for (int i = 0; i < Dims; i++)
+			{
+				sum += v1.data_[i] * v2.data_[i];
+			}
+			return sum;
+		}
+
+		// Compute cross product between two vectors
+		static inline Vector<T, 3> CrossProduct(const Vector<T, 3> v1, const Vector<T, 3> v2)
+		{
+			return CrossProductCalc(v1, v2);
+		}
+
+		template<class T>
+		static inline Vector<T, 3> CrossProductCalc(const Vector<T, 3>& v1, const Vector<T, 3>& v2)
+		{
+			return Vector<T, 3>
+				(v1.data_[1] * v2.data_[2] - v1.data_[2] * v2.data_[1],
+				-(v1.data_[0] * v2.data_[2] - v1.data_[2] * v2.data_[0]),
+				v1.data_[0] * v2.data_[1] - v1.data_[1] * v2.data_[0]);
 		}
 
 	};
