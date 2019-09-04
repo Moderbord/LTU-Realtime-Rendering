@@ -15,5 +15,7 @@ int main()
 
 	modmath::vec3 normal = modmath::Vector<float, 3>::CrossProduct(vector2, vector1);
 
+	modmath::vec3::Distance(point1, point2);
+
 }
 

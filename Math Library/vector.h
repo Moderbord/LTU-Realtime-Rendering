@@ -50,6 +50,11 @@ namespace modmath {
 			this->data_[3] = v4;
 		}
 
+		inline T& operator[](const int i)
+		{
+			return data_[i];
+		}
+
 		// Create a vector from another vector
 		inline Vector(const Vector<T, Dims> &v)
 		{
@@ -153,6 +158,12 @@ namespace modmath {
 		{
 			Vector<T, Dims> normalized = *this;
 			return normalized / LengthCalc(v);
+		}
+
+
+		static inline T Distance(Vector<T, Dims>& v1, const Vector<T, Dims>& v2)
+		{
+			return (v1 - v2).Length();
 		}
 
 
