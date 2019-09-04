@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="matrix.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="vector.h" />
   </ItemGroup>

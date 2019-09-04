@@ -55,6 +55,11 @@ namespace modmath {
 			return data_[i];
 		}
 
+		inline const T& operator[](const int i) const
+		{
+			return data_[i];
+		}
+
 		// Create a vector from another vector
 		inline Vector(const Vector<T, Dims> &v)
 		{
@@ -167,14 +172,8 @@ namespace modmath {
 		}
 
 
-		// Compute dot product betweem two vectors
-		static inline T DotProduct(const Vector<T, Dims>& v1, const Vector<T, Dims> & v2)
-		{
-			return DotProductCalc(v1, v2);
-		}
-
-		template <class T>
-		static inline T DotProductCalc(const Vector<T, Dims>& v1, const Vector<T, Dims>& v2)
+		template <class T, int Dims>
+		static inline T DotProduct(const Vector<T, Dims>& v1, const Vector<T, Dims>& v2)
 		{
 			T sum = 0;
 			for (int i = 0; i < Dims; i++)
@@ -184,14 +183,9 @@ namespace modmath {
 			return sum;
 		}
 
-		// Compute cross product between two vectors
-		static inline Vector<T, 3> CrossProduct(const Vector<T, 3> v1, const Vector<T, 3> v2)
-		{
-			return CrossProductCalc(v1, v2);
-		}
 
 		template<class T>
-		static inline Vector<T, 3> CrossProductCalc(const Vector<T, 3>& v1, const Vector<T, 3>& v2)
+		static inline Vector<T, 3> CrossProduct(const Vector<T, 3>& v1, const Vector<T, 3>& v2)
 		{
 			return Vector<T, 3>
 				(v1.data_[1] * v2.data_[2] - v1.data_[2] * v2.data_[1],

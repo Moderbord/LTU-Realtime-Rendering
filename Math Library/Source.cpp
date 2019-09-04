@@ -1,4 +1,5 @@
 #include "vector.h"
+#include "matrix.h"
 #include "utils.h"
 
 #include <iostream>
@@ -6,16 +7,15 @@
 
 int main()
 {
-	modmath::vec3 point1(0.5f, 0.4f, 0.1f);
-	modmath::vec3 point2(0.4f, 0.9f, 0.1f);
-	modmath::vec3 point3(0.1f, 0.8f, 0.6f);
 
-	modmath::vec3 vector1 = point2 - point1;
-	modmath::vec3 vector2 = point3 - point1;
+	modmath::mat4i mat(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+	modmath::vec4i vec(2, 4, 6, 8);
 
-	modmath::vec3 normal = modmath::Vector<float, 3>::CrossProduct(vector2, vector1);
+	modmath::mat2i mat1(1, 2, 3, 4);
+	modmath::vec2i vec1(2, 4);
 
-	modmath::vec3::Distance(point1, point2);
+	mat * vec;
+
 
 }
 

@@ -11,7 +11,12 @@ namespace modmath
 	typedef Vector<int, 3> vec3i;
 	typedef Vector<int, 4> vec4i;
 
-
+	typedef Matrix<float, 2, 2> mat2;
+	typedef Matrix<float, 3, 3> mat3;
+	typedef Matrix<float, 4, 4> mat4;
+	typedef Matrix<int, 2, 2> mat2i;
+	typedef Matrix<int, 3, 3> mat3i;
+	typedef Matrix<int, 4, 4> mat4i;
 
 
 
