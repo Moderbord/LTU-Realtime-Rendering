@@ -161,6 +161,37 @@ namespace modmath
 		}
 
 
+		static inline Matrix<T, 4, 4> RotationX(const Vector<T, 3> & v)
+		{
+			_STL_VERIFY(Rows > 2, "Low order vector dimension");
+			return Matrix<T, 4, 4> (1,     0,     0,     0,
+									0,   v[0],  v[1],    0,
+									0,  -v[1],  v[0],    0,
+									0,     0,     0,     1);
+		}
+
+		static inline Matrix<T, 4, 4> RotationY(const Vector<T, 3> & v)
+		{
+			_STL_VERIFY(Rows > 2, "Low order vector dimension");
+			return Matrix<T, 4, 4>(v[0],    0,   -v[1],    0,
+								     0,     1,      0,     0,
+								   v[1],    0,    v[0],    0,
+								     0,     0,      0,     1);
+		}
+
+		static inline Matrix<T, 4, 4> RotationZ(const Vector<T, 3> & v)
+		{
+			_STL_VERIFY(Rows > 2, "Low order vector dimension");
+			return Matrix<T, 4, 4>(v[0],   v[1],    0,     0,
+								  -v[1],   v[0],    0,     0,
+								     0,      0,     1,     0,
+								     0,      0,     0,     1);
+		}
+
+
+
+
+
 	};
 
 

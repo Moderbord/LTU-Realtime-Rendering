@@ -20,7 +20,11 @@ namespace modmath {
 	class Vector
 	{
 	public:
-		// Field
+		/**
+		*
+		*
+		* @param Dims Number of elements in the vector
+		*/
 		T data_[Dims];
 
 		// Constructors
@@ -83,14 +87,12 @@ namespace modmath {
 			MODMATH_VECTOR_OPERATOR(-, v.data_[i]);
 		}
 
-		// Multiplication between two vectors
 		template <class T, int Dims>
 		inline Vector<T, Dims> operator*(const Vector<T, Dims>& v)
 		{
 			MODMATH_VECTOR_OPERATOR(*, v.data_[i]);
 		}
 
-		// Division between two vectors
 		template <class T, int Dims>
 		inline Vector<T, Dims> operator/(const Vector<T, Dims>& v)
 		{
