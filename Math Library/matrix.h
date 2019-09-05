@@ -44,7 +44,7 @@ namespace modmath
 			this->data_[2][1] = v21;
 			this->data_[2][2] = v22;
 		}
-
+		
 		inline Matrix(T v00, T v01, T v02, T v03, T v10, T v11, T v12, T v13, T v20, T v21, T v22, T v23, T v30, T v31, T v32, T v33)
 		{
 			_STL_VERIFY(Rows == 4 && Cols == 4, "Size of matrix does not match");
@@ -149,6 +149,16 @@ namespace modmath
 			MODMATH_MATRIX_OPERATOR(/, s);
 		}
 
+		inline Vector<T, 3> operator* (const Vector<T, 3>& v)
+		{
+			Vector<T, 4> increasedV(v[0], v[1], v[2], 1);
+			Vector<T, 3> result;
+			for (int i = 0; i < 3; i++)
+			{
+				result[i] = modmath::Vector<T, 4>().DotProduct(this->data_[i], increasedV);
+			}
+			return result;
+		}
 
 		inline Vector<T, Cols> operator* (const Vector<T, Cols>& v)
 		{
@@ -161,43 +171,74 @@ namespace modmath
 		}
 
 
-		static inline Matrix<T, 4, 4> RotationX(const Vector<T, 3> & v)
+		static inline Matrix<T, 4, 4> RotationX(const Vector<T, 2> & v)
 		{
-			_STL_VERIFY(Rows > 2, "Low order vector dimension");
 			return Matrix<T, 4, 4> (1,     0,     0,     0,
 									0,   v[0],  v[1],    0,
 									0,  -v[1],  v[0],    0,
 									0,     0,     0,     1);
 		}
 
-		static inline Matrix<T, 4, 4> RotationY(const Vector<T, 3> & v)
+		static inline Matrix<T, 4, 4> RotationY(const Vector<T, 2> & v)
 		{
-			_STL_VERIFY(Rows > 2, "Low order vector dimension");
 			return Matrix<T, 4, 4>(v[0],    0,   -v[1],    0,
 								     0,     1,      0,     0,
 								   v[1],    0,    v[0],    0,
 								     0,     0,      0,     1);
 		}
 
-		static inline Matrix<T, 4, 4> RotationZ(const Vector<T, 3> & v)
+		static inline Matrix<T, 4, 4> RotationZ(const Vector<T, 2> & v)
 		{
-			_STL_VERIFY(Rows > 2, "Low order vector dimension");
 			return Matrix<T, 4, 4>(v[0],   v[1],    0,     0,
 								  -v[1],   v[0],    0,     0,
 								     0,      0,     1,     0,
 								     0,      0,     0,     1);
 		}
 
+		static inline Matrix<T, 4, 4> RotationX(T angle)
+		{
+			return RotationX(Vector<T, 2>(cosf(angle), sinf(angle)));
+		}
 
+		static inline Matrix<T, 4, 4> RotationY(T angle)
+		{
+			return RotationY(Vector<T, 2>(cosf(angle), sinf(angle)));
+		}
+
+		static inline Matrix<T, 4, 4> RotationZ(T angle)
+		{
+			return RotationZ(Vector<T, 2>(cosf(angle), sinf(angle)));
+		}
+
+
+		static inline Matrix<T, 4, 4> RotationMatrixXYZ(T angle, Vector<T, 3> & v)
+		{
+			const Vector<T, 3> u(v.Normalized());
+			T x = u[0];
+			T y = u[1];
+			T z = u[2];
+			float cos = cosf(angle);
+			float cosm = 1.0f - cos;
+			float sin = sinf(angle);
+
+			return Matrix<T, 4, 4>(cos+POW2(x)*cosm,   x*y*cosm-z*sin,	     x*z*cosm+y*sin,	  0,							
+								   y*x*cosm+z*sin,	   cos+POW2(y)*cosm,	 y*z*cosm-x*sin,	  0,						
+								   z*x*cosm-y*sin,	   z*y*cosm+x*sin,		 cos+POW2(z)*cosm,    0,							
+								   0,				   0,				     0,				      1);							
+		}
+
+
+		inline Matrix<T, Rows, Cols> Transponate()
+		{
+			Matrix<T, Rows, Cols> tMat;
+			for (int i = 0; i < Rows; i++)
+			{
+				tMat[i] = this->ColToVector(i);
+			}
+			return tMat;
+		}
 
 
 
 	};
-
-
-
-
-
-
-
 }

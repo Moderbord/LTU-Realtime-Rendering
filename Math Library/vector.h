@@ -64,6 +64,30 @@ namespace modmath {
 			return data_[i];
 		}
 
+		inline T x()
+		{
+			return data_[0];
+		}
+
+		inline T y()
+		{
+			_STL_VERIFY(Dims > 1, "Vector out of bounds");
+			return data_[1];
+		}
+
+		inline T z()
+		{
+			_STL_VERIFY(Dims > 2, "Vector out of bounds");
+			return data_[2];
+		}
+
+		inline T w()
+		{
+			_STL_VERIFY(Dims > 3, "Vector out of bounds");
+			return data_[3];
+		}
+
+
 		// Create a vector from another vector
 		inline Vector(const Vector<T, Dims> &v)
 		{
