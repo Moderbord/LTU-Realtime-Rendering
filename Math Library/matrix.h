@@ -1,6 +1,8 @@
 #pragma once
 #include "vector.h"
-
+/// <summary>
+/// Performs a given operation on a modifier value.
+/// </summary>
 #define MODMATH_MATRIX_OPERATOR(OP, Mod)					\
 	{														\
 		Matrix<T, Rows, Cols> result;						\
@@ -13,15 +15,30 @@
 
 namespace modmath
 {
-
+	/// <summary>
+	/// Template Matrix class with definable rows and columns.
+	/// </summary>
 	template<class T, int Rows, int Cols>
 	class Matrix
 	{
 	public:
+		/// <summary>
+		/// Each row contains a Vector wich data.
+		/// </summary>
 		Vector<T, Rows> data_[Cols];
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		inline Matrix() {};
 
+		/// <summary>
+		/// Constructs a Matrix from four values.
+		/// </summary>
+		/// <param name="v00">Value of firs row and first column.</param>
+		/// <param name="v01">Value of second row and first column.</param>
+		/// <param name="v10">Value of first row and second column.</param>
+		/// <param name="v11">Value of second row and second column.</param>
 		inline Matrix(T v00, T v01, T v10, T v11)
 		{
 			_STL_VERIFY(Rows == 2 && Cols == 2, "Size of matrix does not match");
@@ -31,6 +48,18 @@ namespace modmath
 			this->data_[1][1] = v11;
 		}
 
+		/// <summary>
+		/// Constructs a Matrix from 9 values.
+		/// </summary>
+		/// <param name="v00">Value of first row and first column.</param>
+		/// <param name="v01">Value of second row and first column.</param>
+		/// <param name="v02">Value of third row and first column.</param>
+		/// <param name="v10">Value of first row and second column.</param>
+		/// <param name="v11">Value of second row and second column.</param>
+		/// <param name="v12">Value of third row and second column.</param>
+		/// <param name="v20">Value of first row and third column.</param>
+		/// <param name="v21">Value of second row and third column.</param>
+		/// <param name="v22">Value of third row and third column.</param>
 		inline Matrix(T v00, T v01, T v02, T v10, T v11, T v12, T v20, T v21, T v22)
 		{
 			_STL_VERIFY(Rows == 3 && Cols == 3, "Size of matrix does not match");
@@ -45,6 +74,25 @@ namespace modmath
 			this->data_[2][2] = v22;
 		}
 		
+		/// <summary>
+		/// Constructs a Matrix from 16 values;
+		/// </summary>
+		/// <param name="v00">Value of first row and first column.</param>
+		/// <param name="v01">Value of second row and first column.</param>
+		/// <param name="v02">Value of third row and first column.</param>
+		/// <param name="v03">Value of fourth row and first column.</param>
+		/// <param name="v10">Value of first row and second column.</param>
+		/// <param name="v11">Value of second row and second column.</param>
+		/// <param name="v12">Value of third row and second column.</param>
+		/// <param name="v13">Value of fourth row and second column.</param>
+		/// <param name="v20">Value of first row and third column.</param>
+		/// <param name="v21">Value of second row and third column.</param>
+		/// <param name="v22">Value of third row and third column.</param>
+		/// <param name="v23">Value of fourth row and third column.</param>
+		/// <param name="v30">Value of first row and fourth column.</param>
+		/// <param name="v31">Value of second row and fourth column.</param>
+		/// <param name="v32">Value of third row and fourth column.</param>
+		/// <param name="v33">Value of fourth row and fourth column.</param>
 		inline Matrix(T v00, T v01, T v02, T v03, T v10, T v11, T v12, T v13, T v20, T v21, T v22, T v23, T v30, T v31, T v32, T v33)
 		{
 			_STL_VERIFY(Rows == 4 && Cols == 4, "Size of matrix does not match");
@@ -66,16 +114,30 @@ namespace modmath
 			this->data_[3][3] = v33;
 		}
 
+		/// <summary>
+		/// Access a Vector element from the Matrix.
+		/// </summary>
+		/// <param name="i">Index if the Vector to access.</param>
+		/// <returns>Reference to the Vector.</returns>
 		inline Vector<T, Rows>& operator[](const int i)
 		{
 			return data_[i];
 		}
 
+		/// <summary>
+		/// Access a Vector element from the Matrix.
+		/// </summary>
+		/// <param name="i">Index if the Vector to access.</param>
+		/// <returns>A const reference to the Vector.</returns>
 		inline const Vector<T, Rows>& operator[](const int i) const
 		{
 			return data_[i];
 		}
 
+		/// <summary>
+		/// Copies a Matrix from another Matrix of the same size.
+		/// </summary>
+		/// <param name="m">Matrix to copy from.</param>
 		inline Matrix(const Matrix<T, Rows, Cols>& m)
 		{
 			for (int i = 0; i < Rows; i++)
@@ -87,7 +149,11 @@ namespace modmath
 			}
 		}
 
-
+		/// <summary>
+		/// Creates a Vector from a column in a Matrix.
+		/// </summary>
+		/// <param name="c">Index of the column to create a Vector from.</param>
+		/// <returns>Vector with size of the row length.</returns>
 		inline Vector<T, Rows> ColToVector(const int c) const
 		{
 			_STL_VERIFY(c < Rows, "Column vector out of bounds");
@@ -376,7 +442,7 @@ namespace modmath
 			return Matrix<T, 4, 4>(subMat00.Determinant(), -subMat01.Determinant(), subMat02.Determinant(), -subMat03.Determinant(),
 								   -subMat10.Determinant(), subMat11.Determinant(), -subMat12.Determinant(), subMat13.Determinant(),
 								   subMat20.Determinant(), -subMat21.Determinant(), subMat22.Determinant(), -subMat23.Determinant(),
-								   -subMat30.Determinant(), subMat31.Determinant(), -subMat32.Determinant(), subMat33.Determinant());
+								   -subMat30.Determinant(), subMat31.Determinant(), -subMat32.Determinant(), subMat33.Determinant()).Transponate();
 		}
 	};
 }
