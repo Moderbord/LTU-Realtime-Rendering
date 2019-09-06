@@ -160,12 +160,12 @@ namespace modmath
 			return result;
 		}
 
-		inline Vector<T, Cols> operator* (const Vector<T, Cols>& v)
+		inline Vector<T, 4> operator* (const Vector<T, 4>& v)
 		{
-			Vector<T, Cols> result;
-			for (int i = 0; i < Cols; i++)
+			Vector<T, 4> result;
+			for (int i = 0; i < 4; i++)
 			{
-				result[i] = modmath::Vector<T, Cols>().DotProduct(this->data_[i], v);
+				result[i] = modmath::Vector<T, 4>().DotProduct(this->data_[i], v);
 			}
 			return result;
 		}
@@ -238,7 +238,145 @@ namespace modmath
 			return tMat;
 		}
 
+		inline T Determinant()
+		{
+			return DeterminantCalc(*this);
+		}
+
+		template<class T>
+		inline T DeterminantCalc(const Matrix<T, 3, 3> &m)
+		{
+			return m[0][0] * m[1][1] * m[2][2] + m[0][1] * m[1][2] * m[2][0] + m[0][2] * m[1][0] * m[2][1]
+				- m[2][0] * m[1][1] * m[0][2] - m[2][1] * m[1][2] * m[0][0] - m[2][2] * m[1][0] * m[0][1];
+		}
+
+		template<class T>
+		inline T DeterminantCalc(const Matrix<T, 4, 4> & m)
+		{
+			Matrix<T, 3, 3> subMat1(m[1][1], m[1][2], m[1][3],
+									m[2][1], m[2][2], m[2][3],
+									m[3][1], m[3][2], m[3][3]);
+
+			Matrix<T, 3, 3> subMat2(m[0][1], m[0][2], m[0][3],
+									m[2][1], m[2][2], m[2][3],
+									m[3][1], m[3][2], m[3][3]);
+
+			Matrix<T, 3, 3> subMat3(m[0][1], m[0][2], m[0][3],
+									m[1][1], m[1][2], m[1][3],
+									m[3][1], m[3][2], m[3][3]);
+
+			Matrix<T, 3, 3> subMat4(m[0][1], m[0][2], m[0][3],
+									m[1][1], m[1][2], m[1][3],
+									m[2][1], m[2][2], m[2][3]);
 
 
+			return m[0][0] * subMat1.Determinant() - m[1][0] * subMat2.Determinant() + m[2][0] * subMat3.Determinant() - m[3][0] * subMat4.Determinant();
+		}
+
+
+		inline Matrix<T, Rows, Cols> Inverse()
+		{
+			return InverseCalc(*this);
+		}
+
+		template<class T>
+		inline Matrix<T, 4, 4> InverseCalc(Matrix<T, 4, 4> & m)
+		{
+			T det = m.Determinant();
+
+			if (det == 0)
+			{
+				return m * 0;
+			}
+
+			return m.Adjugat() * (1 / det) ;
+		}
+
+
+		inline Matrix<T, Rows, Cols> Adjugat()
+		{
+			return AdjugatCalc(*this);
+		}
+
+		template<class T>
+		inline Matrix<T, 4, 4> AdjugatCalc(Matrix<T, 4, 4> &m)
+		{
+			Vector<T, 4> v0 = m[0];
+			Vector<T, 4> v1 = m[1];
+			Vector<T, 4> v2 = m[2];
+			Vector<T, 4> v3 = m[3];
+
+			Matrix<T, 3, 3> subMat00(v1[1], v1[2], v1[3],
+									 v2[1], v2[2], v2[3],
+									 v3[1], v3[2], v3[3]);
+
+			Matrix<T, 3, 3> subMat01(v1[0], v1[2], v1[3],
+									 v2[0], v2[2], v2[3],
+									 v3[0], v3[2], v3[3]);
+
+			Matrix<T, 3, 3> subMat02(v1[0], v1[1], v1[3],
+									 v2[0], v2[1], v2[3],
+									 v3[0], v3[1], v3[3]);
+
+			Matrix<T, 3, 3> subMat03(v1[0], v1[1], v1[2],
+									 v2[0], v2[1], v2[2],
+									 v3[0], v3[1], v3[2]);
+
+
+			Matrix<T, 3, 3> subMat10(v0[1], v0[2], v0[3],
+									 v2[1], v2[2], v2[3],
+									 v3[1], v3[2], v3[3]);
+
+			Matrix<T, 3, 3> subMat11(v0[0], v0[2], v0[3],
+									 v2[0], v2[2], v2[3],
+									 v3[0], v3[2], v3[3]);
+
+			Matrix<T, 3, 3> subMat12(v0[0], v0[1], v0[3],
+									 v2[0], v2[1], v2[3],
+									 v3[0], v3[1], v3[3]);
+
+			Matrix<T, 3, 3> subMat13(v0[0], v0[1], v0[2],
+									 v2[0], v2[1], v2[2],
+									 v3[0], v3[1], v3[2]);
+
+
+			Matrix<T, 3, 3> subMat20(v0[1], v0[2], v0[3],
+									 v1[1], v1[2], v1[3],
+									 v3[1], v3[2], v3[3]);
+
+			Matrix<T, 3, 3> subMat21(v0[0], v0[2], v0[3],
+									 v1[0], v1[2], v1[3],
+									 v3[0], v3[2], v3[3]);
+
+			Matrix<T, 3, 3> subMat22(v0[0], v0[1], v0[3],
+									 v1[0], v1[1], v1[3],
+									 v3[0], v3[1], v3[3]);
+
+			Matrix<T, 3, 3> subMat23(v0[0], v0[1], v0[2],
+									 v1[0], v1[1], v1[2],
+									 v3[0], v3[1], v3[2]);
+
+
+			Matrix<T, 3, 3> subMat30(v0[1], v0[2], v0[3],
+									 v1[1], v1[2], v1[3],
+									 v2[1], v2[2], v2[3]);
+
+			Matrix<T, 3, 3> subMat31(v0[0], v0[2], v0[3],
+									 v1[0], v1[2], v1[3],
+									 v2[0], v2[2], v2[3]);
+
+			Matrix<T, 3, 3> subMat32(v0[0], v0[1], v0[3],
+									 v1[0], v1[1], v1[3],
+									 v2[0], v2[1], v2[3]);
+
+			Matrix<T, 3, 3> subMat33(v0[0], v0[1], v0[2],
+									 v1[0], v1[1], v1[2],
+									 v2[0], v2[1], v2[2]);
+
+			return Matrix<T, 4, 4>(subMat00.Determinant(), -subMat01.Determinant(), subMat02.Determinant(), -subMat03.Determinant(),
+								   -subMat10.Determinant(), subMat11.Determinant(), -subMat12.Determinant(), subMat13.Determinant(),
+								   subMat20.Determinant(), -subMat21.Determinant(), subMat22.Determinant(), -subMat23.Determinant(),
+								   -subMat30.Determinant(), subMat31.Determinant(), -subMat32.Determinant(), subMat33.Determinant());
+		}
 	};
 }
