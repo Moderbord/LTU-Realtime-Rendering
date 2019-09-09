@@ -28,7 +28,7 @@ namespace modmath
 		Vector<T, Rows> data_[Cols];
 
 		/// <summary>
-		/// Constructor
+		/// Empty constructor
 		/// </summary>
 		inline Matrix() {};
 
@@ -117,7 +117,7 @@ namespace modmath
 		/// <summary>
 		/// Access a Vector element from the Matrix.
 		/// </summary>
-		/// <param name="i">Index if the Vector to access.</param>
+		/// <param name="i">Index of the Vector to access.</param>
 		/// <returns>Reference to the Vector.</returns>
 		inline Vector<T, Rows>& operator[](const int i)
 		{
@@ -127,7 +127,7 @@ namespace modmath
 		/// <summary>
 		/// Access a Vector element from the Matrix.
 		/// </summary>
-		/// <param name="i">Index if the Vector to access.</param>
+		/// <param name="i">Index of the Vector to access.</param>
 		/// <returns>A const reference to the Vector.</returns>
 		inline const Vector<T, Rows>& operator[](const int i) const
 		{
@@ -135,7 +135,7 @@ namespace modmath
 		}
 
 		/// <summary>
-		/// Copies a Matrix from another Matrix of the same size.
+		/// Copies values from a Matrix to a new one.
 		/// </summary>
 		/// <param name="m">Matrix to copy from.</param>
 		inline Matrix(const Matrix<T, Rows, Cols>& m)
@@ -352,15 +352,14 @@ namespace modmath
 		/// <summary>
 		/// Rotation using Rodrigues rotation formula.
 		/// </summary>
-		/// <param name="angle"></param>
-		/// <param name="v"></param>
-		/// <returns></returns>
-		static inline Matrix<T, 4, 4> RotationMatrixXYZ(T angle, Vector<T, 3> & v)
+		/// <param name="angle">Angle for rotation.</param>
+		/// <param name="v">Normalized Vector to rotate around.</param>
+		/// <returns>Matrix containing rotation.</returns>
+		static inline Matrix<T, 4, 4> RotationMatrixXYZ(T angle, const Vector<T, 3> & v)
 		{
-			const Vector<T, 3> u(v.Normalized());
-			T x = u[0];
-			T y = u[1];
-			T z = u[2];
+			T x = v[0];
+			T y = v[1];
+			T z = v[2];
 			float cos = cosf(angle);
 			float cosm = 1.0f - cos;
 			float sin = sinf(angle);
@@ -371,7 +370,10 @@ namespace modmath
 								   0,				   0,				     0,				      1);							
 		}
 
-
+		/// <summary>
+		/// Calculates the transponate of a Matrix.
+		/// </summary>
+		/// <returns>The transponate of a Matrix.</returns>
 		inline Matrix<T, Rows, Cols> Transponate()
 		{
 			Matrix<T, Rows, Cols> tMat;
@@ -382,11 +384,19 @@ namespace modmath
 			return tMat;
 		}
 
+		/// <summary>
+		/// Calculates the determinant of a matrix.
+		/// </summary>
+		/// <returns>The determinant of the Matrix.</returns>
 		inline T Determinant()
 		{
 			return DeterminantCalc(*this);
 		}
 
+		/// <summary>
+		/// Calculates the determinant of a 3x3 matrix.
+		/// </summary>
+		/// <returns>The determinant of the Matrix.</returns>
 		template<class T>
 		inline T DeterminantCalc(const Matrix<T, 3, 3> &m)
 		{
@@ -394,6 +404,10 @@ namespace modmath
 				- m[2][0] * m[1][1] * m[0][2] - m[2][1] * m[1][2] * m[0][0] - m[2][2] * m[1][0] * m[0][1];
 		}
 
+		/// <summary>
+		/// Calculates the determinant of a 4x4 matrix.
+		/// </summary>
+		/// <returns>The determinant of the Matrix.</returns>
 		template<class T>
 		inline T DeterminantCalc(const Matrix<T, 4, 4> & m)
 		{
@@ -417,33 +431,47 @@ namespace modmath
 			return m[0][0] * subMat1.Determinant() - m[1][0] * subMat2.Determinant() + m[2][0] * subMat3.Determinant() - m[3][0] * subMat4.Determinant();
 		}
 
-
+		/// <summary>
+		/// Calculates the inverse of a Matrix.
+		/// </summary>
+		/// <returns>Inverse of the Matrix.</returns>
 		inline Matrix<T, Rows, Cols> Inverse()
 		{
 			return InverseCalc(*this);
 		}
 
 		template<class T>
+		/// <summary>
+		/// Calculates the invserse of a 4x4 Matrix.
+		/// </summary>
+		/// <param name="m">Matrix to calculate inverse from.</param>
+		/// <returns>Inverse of a Matrix.</returns>
 		inline Matrix<T, 4, 4> InverseCalc(Matrix<T, 4, 4> & m)
 		{
 			T det = m.Determinant();
-
 			if (det == 0)
 			{
 				return m * 0;
 			}
-
-			return m.Adjugat() * (1 / det) ;
+			return m.Adjugate() / det ;
 		}
 
-
-		inline Matrix<T, Rows, Cols> Adjugat()
+		/// <summary>
+		/// Calculates the adjugate of a Matrix.
+		/// </summary>
+		/// <returns>Adjugate of a Matrix.</returns>
+		inline Matrix<T, Rows, Cols> Adjugate()
 		{
-			return AdjugatCalc(*this);
+			return AdjugateCalc(*this);
 		}
 
 		template<class T>
-		inline Matrix<T, 4, 4> AdjugatCalc(Matrix<T, 4, 4> &m)
+		/// <summary>
+		/// Calculates the adjugate of a 4x4 Matrix.
+		/// </summary>
+		/// <param name="m">Matrix to calculate adjugate </param>
+		/// <returns>Adjugate of a 4x4 Matrix.</returns>
+		inline Matrix<T, 4, 4> AdjugateCalc(Matrix<T, 4, 4> &m)
 		{
 			Vector<T, 4> v0 = m[0];
 			Vector<T, 4> v1 = m[1];

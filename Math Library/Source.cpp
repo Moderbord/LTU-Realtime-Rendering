@@ -19,7 +19,7 @@ int main()
 
 	mat2.Inverse();
 
-	modmath::Mat4 rotmat = modmath::Mat4::RotationMatrixXYZ(modmath::mPi / 4.0f, vec2);
+	modmath::Mat4 rotmat = modmath::Mat4::RotationMatrixXYZ(modmath::mPi / 4.0f, vec2.Normalized());
 	rotmat * vec2;
 }
 
