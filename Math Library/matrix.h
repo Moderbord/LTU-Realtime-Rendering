@@ -1,7 +1,7 @@
 #pragma once
 #include "vector.h"
 /// <summary>
-/// Performs a given operation on a modifier value.
+/// Performs a given operation along with a modifier value.
 /// </summary>
 #define MODMATH_MATRIX_OPERATOR(OP, Mod)					\
 	{														\
@@ -165,56 +165,95 @@ namespace modmath
 			return colVec;
 		}
 
-
 		template<class T, int Rows, int Cols>
+		/// <summary>
+		/// Performs addition between two Matrices.
+		/// </summary>
+		/// <param name="m">Matrix to add.</param>
+		/// <returns>Matrix containing the sum of two matrices.</returns>
 		inline Matrix<T, Rows, Cols> operator+(const Matrix<T, Rows, Cols>& m)
 		{
 			MODMATH_MATRIX_OPERATOR(+, m.data_[i]);
 		}
 
 		template<class T, int Rows, int Cols>
+		/// <summary>
+		/// Performs subtraction between two matrices.
+		/// </summary>
+		/// <param name="m">Matrix to subtract from.</param>
+		/// <returns>Matrix containing the difference of two matrices.</returns>
 		inline Matrix<T, Rows, Cols> operator-(const Matrix<T, Rows, Cols>& m)
 		{
 			MODMATH_MATRIX_OPERATOR(-, m.data_[i]);
 		}
 
 		template<class T, int Rows, int Cols>
+		/// <summary>
+		/// Performs Matrix multiplikation between two matrices.
+		/// </summary>
+		/// <param name="m">Matrix to be multiplied by.</param>
+		/// <returns>Matrix containing the product of two matrices.</returns>
 		inline Matrix<T, Rows, Cols> operator*(const Matrix<T, Rows, Cols>& m)
 		{
 			Matrix<T, Rows, Cols> result;
-
 			for (int i = 0; i < Cols; i++)
 			{
+				// Creates a column Vector
 				Vector<T, Rows> colVec = m.ColToVector(i);
-
 				for (int  j = 0; j < Rows; j++)
 				{
+					// Performs Dot Product operation between row and column Vector
 					result.data_[j][i] = modmath::Vector<T, Rows>().DotProduct(this->data_[j], colVec);
 				}
 			}
 			return result;
 		}
 
+		/// <summary>
+		/// Addition between a Matrix and a scalar.
+		/// </summary>
+		/// <param name="s">Scalar to add.</param>
+		/// <returns>Matrix with added scalar.</returns>
 		Matrix<T, Rows, Cols> operator +(const T s)
 		{
 			MODMATH_MATRIX_OPERATOR(+, s);
 		}
 
+		/// <summary>
+		/// Subtraction between a Matrix and a scalar.
+		/// </summary>
+		/// <param name="s">Scalar to subtract.</param>
+		/// <returns>Matrix with subtracted scalar.</returns>
 		Matrix<T, Rows, Cols> operator -(const T s)
 		{
 			MODMATH_MATRIX_OPERATOR(-, s);
 		}
 
+		/// <summary>
+		/// Multiplicaiton between a Matrix and a scalar.
+		/// </summary>
+		/// <param name="s">Scalar to multiply by.</param>
+		/// <returns>Matrix with multiplied scalar.</returns>
 		Matrix<T, Rows, Cols> operator *(const T s)
 		{
 			MODMATH_MATRIX_OPERATOR(*, s);
 		}
 
+		/// <summary>
+		/// Division between a Matrix and a scalar.
+		/// </summary>
+		/// <param name="s">Scalar to divide by.</param>
+		/// <returns>Matrix with divided scalar.</returns>
 		Matrix<T, Rows, Cols> operator /(const T s)
 		{
 			MODMATH_MATRIX_OPERATOR(/, s);
 		}
 
+		/// <summary>
+		/// Multiplication between a 4x4 Matrix and a 3-element Vector.
+		/// </summary>
+		/// <param name="v">Vector to multiply by.</param>
+		/// <returns>A 3-element Vector.</returns>
 		inline Vector<T, 3> operator* (const Vector<T, 3>& v)
 		{
 			Vector<T, 4> increasedV(v[0], v[1], v[2], 1);
@@ -226,6 +265,11 @@ namespace modmath
 			return result;
 		}
 
+		/// <summary>
+		/// Multiplication between a 4x4 Matrix and a 4-element Vector.
+		/// </summary>
+		/// <param name="v">Vector to multiply by.</param>
+		/// <returns>A 4-element Vector.</returns>
 		inline Vector<T, 4> operator* (const Vector<T, 4>& v)
 		{
 			Vector<T, 4> result;
@@ -236,7 +280,11 @@ namespace modmath
 			return result;
 		}
 
-
+		/// <summary>
+		/// Rotation around X-axis with a normalized directional Vector.
+		/// </summary>
+		/// <param name="v">Normalized directional Vector.</param>
+		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationX(const Vector<T, 2> & v)
 		{
 			return Matrix<T, 4, 4> (1,     0,     0,     0,
@@ -245,6 +293,11 @@ namespace modmath
 									0,     0,     0,     1);
 		}
 
+		/// <summary>
+		/// Rotation around Y-axis with a normalized directional Vector
+		/// </summary>
+		/// <param name="v">Normalized directional Vector.</param>
+		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationY(const Vector<T, 2> & v)
 		{
 			return Matrix<T, 4, 4>(v[0],    0,   -v[1],    0,
@@ -253,6 +306,11 @@ namespace modmath
 								     0,     0,      0,     1);
 		}
 
+		/// <summary>
+		/// Rotation around Z-axis with a normalized directional Vector
+		/// </summary>
+		/// <param name="v">Normalized directional Vector.</param>
+		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationZ(const Vector<T, 2> & v)
 		{
 			return Matrix<T, 4, 4>(v[0],   v[1],    0,     0,
@@ -261,22 +319,42 @@ namespace modmath
 								     0,      0,     0,     1);
 		}
 
+		/// <summary>
+		/// Rotation around X-axis with an angle.
+		/// </summary>
+		/// <param name="angle">Angle in radians.</param>
+		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationX(T angle)
 		{
 			return RotationX(Vector<T, 2>(cosf(angle), sinf(angle)));
 		}
 
+		/// <summary>
+		/// Rotation around Y-axis with an angle.
+		/// </summary>
+		/// <param name="angle">Angle in radians.</param>
+		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationY(T angle)
 		{
 			return RotationY(Vector<T, 2>(cosf(angle), sinf(angle)));
 		}
 
+		/// <summary>
+		/// Rotation around Z-axis with an angle.
+		/// </summary>
+		/// <param name="angle">Angle in radians.</param>
+		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationZ(T angle)
 		{
 			return RotationZ(Vector<T, 2>(cosf(angle), sinf(angle)));
 		}
 
-
+		/// <summary>
+		/// Rotation using Rodrigues rotation formula.
+		/// </summary>
+		/// <param name="angle"></param>
+		/// <param name="v"></param>
+		/// <returns></returns>
 		static inline Matrix<T, 4, 4> RotationMatrixXYZ(T angle, Vector<T, 3> & v)
 		{
 			const Vector<T, 3> u(v.Normalized());
