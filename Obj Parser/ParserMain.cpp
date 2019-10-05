@@ -18,11 +18,11 @@ namespace
 template<typename BackInserter>
 void stFloat(const std::string& s, char delim, BackInserter vector)
 {
-	std::stringstream ss(s);
+	std::stringstream stream(s);
 	std::string item;
-	while (std::getline(ss, item, delim))
+	while (std::getline(stream, item, delim))
 	{
-		if (item.at(0) == 'v') continue;
+		if (item == "" || item.at(0) == 'v') continue;
 		*(vector++) = std::stof(item, nullptr);
 	}
 }
@@ -30,27 +30,28 @@ void stFloat(const std::string& s, char delim, BackInserter vector)
 template<typename BackInserter>
 void stString(const std::string& s, char delim, BackInserter vector)
 {
-	std::stringstream ss(s);
+	std::stringstream stream(s);
 	std::string item;
-	while (std::getline(ss, item, delim))
+	while (std::getline(stream, item, delim))
 	{
-		if (item.at(0) == 'f') continue;
+		if (item == "" || item.at(0) == 'f') continue;
 		*(vector++) = item;
 	}
 }
 
 int main()
 {
+	int trangleCount = 0;
+	int quadCount = 0;
+	std::string objPath = "bird.obj";
+	cout << "Loading " << objPath << "..\n" << endl;
 
 	std::vector<std::vector<float>> vertexPos;
 	std::vector<std::vector<float>> vertexTex;
 	std::vector<std::vector<float>> vertexNormal;
 	std::vector<std::vector<std::string>> verticesStr;
 
-	std::string objPath = "deer.obj";
 	std::ifstream ifStream(objPath);
-	cout << "Loading " << objPath << "..\n" << endl;
-
 	std::stringstream sStream;
 	std::string line;
 	while (getline(ifStream, line))
@@ -80,6 +81,14 @@ int main()
 		{
 			std::vector<std::string> vec;
 			stString(line, (char)32, std::back_inserter(vec));
+
+			if (vec.size() == 4)
+			{
+				cout << "Found quad! Splitting.." << endl;
+				std::vector<std::string> qVec(vec.begin(), vec.end() - 1);
+				continue;
+			}
+
 			verticesStr.push_back(vec);
 			continue;
 		}
