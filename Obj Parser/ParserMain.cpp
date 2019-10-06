@@ -22,7 +22,7 @@ void stFloat(const std::string& s, char delim, BackInserter vector)
 	std::string item;
 	while (std::getline(stream, item, delim))
 	{
-		if (item == "" || item.at(0) == 'v') continue;
+		if (item.at(0) == 'v') continue;
 		*(vector++) = std::stof(item, nullptr);
 	}
 }
@@ -34,7 +34,7 @@ void stString(const std::string& s, char delim, BackInserter vector)
 	std::string item;
 	while (std::getline(stream, item, delim))
 	{
-		if (item == "" || item.at(0) == 'f') continue;
+		if (item.at(0) == 'f') continue;
 		*(vector++) = item;
 	}
 }
@@ -43,19 +43,24 @@ int main()
 {
 	int trangleCount = 0;
 	int quadCount = 0;
-	std::string objPath = "bird.obj";
+	std::string objPath = "cube.obj";
 	cout << "Loading " << objPath << "..\n" << endl;
 
 	std::vector<std::vector<float>> vertexPos;
 	std::vector<std::vector<float>> vertexTex;
 	std::vector<std::vector<float>> vertexNormal;
-	std::vector<std::vector<std::string>> verticesStr;
+	std::vector<std::vector<std::string>> triangleStr;
+	std::vector<std::vector<float>> indicies;
 
 	std::ifstream ifStream(objPath);
 	std::stringstream sStream;
 	std::string line;
 	while (getline(ifStream, line))
 	{
+		if (line.find("#") != std::string::npos)
+		{
+			continue;
+		}
 		if (line.find("v ") != std::string::npos)
 		{
 			std::vector<float> vec;
@@ -82,20 +87,39 @@ int main()
 			std::vector<std::string> vec;
 			stString(line, (char)32, std::back_inserter(vec));
 
-			if (vec.size() == 4)
+			if (vec.size() > 3)
 			{
-				cout << "Found quad! Splitting.." << endl;
-				std::vector<std::string> qVec(vec.begin(), vec.end() - 1);
+				int i;
+				for (i = 2; i < vec.size(); i++)
+				{
+					std::vector<std::string> qVec;
+					qVec.push_back(vec[0]);
+					qVec.push_back(vec[i - 1]);
+					qVec.push_back(vec[i]);
+					triangleStr.push_back(qVec);
+				}
+				cout << i << "-sized polygon found. Splitting.." << endl;
 				continue;
 			}
-
-			verticesStr.push_back(vec);
+			triangleStr.push_back(vec);
 			continue;
+		}
+	}
+
+	for (std::vector<std::vector<std::string>>::iterator it = triangleStr.begin(); it != triangleStr.end(); it++)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			std::vector<float> vec;
+			stFloat((*it)[i], '/', std::back_inserter(vec));
+			indicies.push_back(vec);
 		}
 	}
 
 	cout << vertexPos.size() << " vertex positions loaded" << endl;
 	cout << vertexTex.size() << " vertex texture mappings loaded" << endl;
 	cout << vertexNormal.size() << " vertex normals loaded" << endl;
+	cout << triangleStr.size() << " total traingles" << endl;
+	cout << indicies.size() << " total indicies" << endl;
 
 }
