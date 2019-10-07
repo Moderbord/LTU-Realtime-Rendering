@@ -28,12 +28,12 @@ namespace modmath
 		/// <summary>
 		/// Vector data containing elements of class T
 		/// </summary>
-		T data_[Dims];
+		T data_[Dims] = { 0 };
 
 		/// <summary>
 		/// Empty constructor
 		/// </summary>
-		inline Vector(){}
+		inline Vector() {}
 		
 		/// <summary>
 		/// Constructs a Vector from 2 values.
@@ -154,7 +154,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Vector to add.</param>
 		/// <returns>Vector containing the addition of two Vectors.</returns>
-		inline Vector<T, Dims> operator+(const Vector<T, Dims> &v)
+		inline Vector<T, Dims> operator+(const Vector<T, Dims> &v) const
 		{
 			MODMATH_VECTOR_OPERATOR(+, v.data_[i]);
 		}
@@ -165,7 +165,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Vector to subtract.</param>
 		/// <returns>Vector containing the subtraction of two Vectors.</returns>
-		inline Vector<T, Dims> operator-(const Vector<T, Dims>& v)
+		inline Vector<T, Dims> operator-(const Vector<T, Dims>& v) const
 		{
 			MODMATH_VECTOR_OPERATOR(-, v.data_[i]);
 		}
@@ -176,7 +176,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Vector to multiply.</param>
 		/// <returns>Vector containing the product of two Vectors.</returns>
-		inline Vector<T, Dims> operator*(const Vector<T, Dims>& v)
+		inline Vector<T, Dims> operator*(const Vector<T, Dims>& v) const
 		{
 			MODMATH_VECTOR_OPERATOR(*, v.data_[i]);
 		}
@@ -187,7 +187,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Vector to divide.</param>
 		/// <returns>Vector containing the quota of two Vectors.</returns>
-		inline Vector<T, Dims> operator/(const Vector<T, Dims>& v)
+		inline Vector<T, Dims> operator/(const Vector<T, Dims>& v) const
 		{
 			MODMATH_VECTOR_OPERATOR(/ , v.data_[i]);
 		}
@@ -197,7 +197,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Scalar to add.</param>
 		/// <returns>Vector with added scalar.</returns>
-		Vector<T, Dims> operator+(const T s)
+		Vector<T, Dims> operator+(const T s) const
 		{
 			MODMATH_VECTOR_OPERATOR(+, s);
 		}
@@ -207,7 +207,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Scalar to subtract.</param>
 		/// <returns>Vector with subtracted scalar.</returns>
-		Vector<T, Dims> operator-(const T s)
+		Vector<T, Dims> operator-(const T s) const
 		{
 			MODMATH_VECTOR_OPERATOR(-, s);
 		}
@@ -217,7 +217,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Scalar to multiply.</param>
 		/// <returns>Vector with multiplied scalar.</returns>
-		Vector<T, Dims> operator*(const T s)
+		Vector<T, Dims> operator*(const T s) const
 		{
 			MODMATH_VECTOR_OPERATOR(*, s);
 		}
@@ -227,7 +227,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="v">Scalar to divide.</param>
 		/// <returns>Vector with divided scalar.</returns>
-		Vector<T, Dims> operator/(const T s)
+		Vector<T, Dims> operator/(const T s) const
 		{
 			MODMATH_VECTOR_OPERATOR(/, s);
 		}
@@ -275,6 +275,8 @@ namespace modmath
 		inline T NormalizeCalc(Vector<T, Dims> &v)
 		{
 			const T length = LengthCalc(v);
+			if (length == 0) { return 0.0f; }
+
 			v = v / length;
 			return length;
 		}
@@ -296,6 +298,8 @@ namespace modmath
 		/// <returns>Normalized Vector.</returns>
 		inline Vector<T, Dims> NormalizedCalc(const Vector<T, Dims>& v)
 		{
+			if (LengthCalc(v) == 0) { return v * 0; }
+
 			Vector<T, Dims> normalized = *this;
 			return normalized / LengthCalc(v);
 		}

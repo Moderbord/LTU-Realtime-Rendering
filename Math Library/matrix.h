@@ -193,7 +193,7 @@ namespace modmath
 		/// </summary>
 		/// <param name="m">Matrix to be multiplied by.</param>
 		/// <returns>Matrix containing the product of two matrices.</returns>
-		inline Matrix<T, Rows, Cols> operator*(const Matrix<T, Rows, Cols>& m)
+		inline Matrix<T, Rows, Cols> operator*(const Matrix<T, Rows, Cols>& m) const
 		{
 			Matrix<T, Rows, Cols> result;
 			for (int i = 0; i < Cols; i++)
@@ -287,6 +287,8 @@ namespace modmath
 		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationX(const Vector<T, 2> & v)
 		{
+			if (v[0] == 0 && v[1] == 0) { return Identity4(); }
+
 			return Matrix<T, 4, 4> (1,     0,     0,     0,
 									0,   v[0],  v[1],    0,
 									0,  -v[1],  v[0],    0,
@@ -300,6 +302,7 @@ namespace modmath
 		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationY(const Vector<T, 2> & v)
 		{
+			if (v[0] == 0 && v[1] == 0) { return Identity4(); }
 			return Matrix<T, 4, 4>(v[0],    0,   -v[1],    0,
 								     0,     1,      0,     0,
 								   v[1],    0,    v[0],    0,
@@ -326,7 +329,7 @@ namespace modmath
 		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationX(T angle)
 		{
-			return RotationX(Vector<T, 2>(cosf(angle), sinf(angle)));
+			return RotationX(Vector<T, 2>(cosf(angle), sinf(-angle)));
 		}
 
 		/// <summary>
@@ -336,7 +339,7 @@ namespace modmath
 		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationY(T angle)
 		{
-			return RotationY(Vector<T, 2>(cosf(angle), sinf(angle)));
+			return RotationY(Vector<T, 2>(cosf(angle), sinf(-angle)));
 		}
 
 		/// <summary>
@@ -346,7 +349,7 @@ namespace modmath
 		/// <returns>Matrix containing rotation.</returns>
 		static inline Matrix<T, 4, 4> RotationZ(T angle)
 		{
-			return RotationZ(Vector<T, 2>(cosf(angle), sinf(angle)));
+			return RotationZ(Vector<T, 2>(cosf(angle), sinf(-angle)));
 		}
 
 		/// <summary>
@@ -360,14 +363,107 @@ namespace modmath
 			T x = v[0];
 			T y = v[1];
 			T z = v[2];
+
+			if (x == 0 && y == 0 && z == 0) { return Identity4(); }
+
 			float cos = cosf(angle);
 			float cosm = 1.0f - cos;
-			float sin = sinf(angle);
+			float sin = sinf(-angle);
 
 			return Matrix<T, 4, 4>(cos+POW2(x)*cosm,   x*y*cosm-z*sin,	     x*z*cosm+y*sin,	  0,							
-								   y*x*cosm+z*sin,	   cos+POW2(y)*cosm,	 y*z*cosm-x*sin,	  0,						
-								   z*x*cosm-y*sin,	   z*y*cosm+x*sin,		 cos+POW2(z)*cosm,    0,							
+								   y*x*cosm+z*sin,	   cos+POW2(y)*cosm,	 y*z*cosm+(-x*sin),	  0,						
+								   z*x*cosm+(-y*sin),  z*y*cosm+x*sin,		 cos+POW2(z)*cosm,    0,							
 								   0,				   0,				     0,				      1);							
+		}
+
+		/// <summary>
+		/// Creates a 3x3 identity matrix with class T.
+		/// </summary>
+		/// <returns>A 3x3 identity matrix.</returns>
+		static inline Matrix<T, 3, 3> Identity3()
+		{
+			return Matrix<T, 3, 3>(1, 0, 0,
+								   0, 1, 0,
+								   0, 0, 1);
+		}
+
+		/// <summary>
+		/// Creates a 4x4 identity matrix with class T.
+		/// </summary>
+		/// <returns>A 4x4 identity matrix.</returns>
+		static inline Matrix<T, 4, 4> Identity4()
+		{
+			return Matrix<T, 4, 4>(1,	0,	0,	0,
+								   0,	1,	0,	0,
+								   0,	0,	1,	0,
+								   0,	0,	0,	1);
+		}
+
+		/// <summary>
+		/// Creates a translation matrix from three float values.
+		/// </summary>
+		/// <param name="x">Translation in x axis.</param>
+		/// <param name="y">Translation in y axis.</param>
+		/// <param name="z">Translation in z axis.</param>
+		/// <returns>Matrix containing translation.</returns>
+		static inline Matrix<T, 4, 4> Translation(float x, float y, float z)
+		{
+			return Matrix<T, 4, 4>( 1, 0, 0, x,
+									0, 1, 0, y,
+									0, 0, 1, z,
+									0, 0, 0, 1);
+		}
+
+		/// <summary>
+		/// Calculates a perspective matrix for a specified frustrum.
+		/// </summary>
+		/// <param name="angle">Field of View angle.</param>
+		/// <param name="aspectRatio">Resolution or ration between width and height.</param>
+		/// <param name="near">Distance to near clipping plane.</param>
+		/// <param name="far">Distance to far clipping plane.</param>
+		/// <returns>A 4x4 perspective matrix.</returns>
+		static inline Matrix<T, 4, 4> PerspectiveMatrix(float angle, float aspectRatio, float near, float far)
+		{
+			float r = tanf(angle / 2) * near;
+			float l = -r;
+			float t = r / aspectRatio;
+			float b = -t;
+
+			return Matrix<T, 4, 4>(
+				(2*near)/(r - l),		0,			(r + l)/(r - l),					0,
+						0,		(2*near)/(t - b),	(t + b)/(t - b),					0,
+						0,				0,		-(far+near)/(far - near),			-(2* far * near)/(far - near),
+						0,				0,				-1,								0);
+		}
+
+		/// <summary>
+		/// Calculates a "view target" matrix between two Vector points.
+		/// </summary>
+		/// <param name="camPos">Vector position of camera.</param>
+		/// <param name="camTarget">Vector position of target.</param>
+		/// <returns>A 4x4 view matrix.</returns>
+		static inline Matrix<T, 4, 4> LookAt(const Vector<T, 3>& camPos, const Vector<T, 3>& camTarget)
+		{
+			return LookAt(camPos, camTarget, Vector<T, 3>(0.0f, 1.0f, 0.0f));
+		}
+
+		/// <summary>
+		/// Calculates a "view target" matrix between two Vector points using the given "Up" Vector.
+		/// </summary>
+		/// <param name="camPos">Vector position of camera.</param>
+		/// <param name="camTarget">Vector position of target.</param>
+		/// <param name="upVector">Vector that defines "up" direction.</param>
+		/// <returns>A 4x4 view matrix.</returns>
+		static inline Matrix<T, 4, 4> LookAt(const Vector<T, 3> & camPos, const Vector<T, 3> & camTarget, const Vector<T, 3> & upVector)
+		{
+			Vector<T, 3> vecZ = (camPos - camTarget).Normalized();
+			Vector<T, 3> vecX = (modmath::Vec3::CrossProduct(upVector, vecZ)).Normalized();
+			Vector<T, 3> vecY = modmath::Vec3::CrossProduct(vecZ, vecX);
+
+			return Matrix<T, 4, 4>(vecX.x(), vecX.y(), vecX.z(), -(modmath::Vec3::DotProduct(vecX, camPos)),
+								   vecY.x(), vecY.y(), vecY.z(), -(modmath::Vec3::DotProduct(vecY, camPos)),
+								   vecZ.x(), vecZ.y(), vecZ.z(), -(modmath::Vec3::DotProduct(vecZ, camPos)),
+								   0, 0, 0, 1);
 		}
 
 		/// <summary>
